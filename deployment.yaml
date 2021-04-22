@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  spring-boot
+  template:
+    metadata:
+      labels:
+        app:  spring-boot
+    spec:
+      containers:
+        - name: app
+          image: bouitamine/spring_boot_docker-0.0.1:0.0.1
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /docker
+              port: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  spring-boot-svc
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app:  spring-boot
